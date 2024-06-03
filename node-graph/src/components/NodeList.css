@@ -1,0 +1,29 @@
+.node-list {
+    text-align: left;
+  }
+  
+  .node-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .node-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .node-list button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .node-list button:hover {
+    background-color: darkred;
+  }
+  
