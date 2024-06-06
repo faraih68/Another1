@@ -5,11 +5,11 @@ import './AddNode.css';
 
 const AddNode = ({ onNewNode }) => {
   const [nodeName, setNodeName] = useState('');
-  const [edges, setEdges] = useState([{ targetNodeId: '', weight: 0 }]);
+  const [edges, setEdges] = useState([{ targetNodeName: '', weight: 0 }]);
   const navigate = useNavigate();
 
   const handleAddEdge = () => {
-    setEdges([...edges, { targetNodeId: '', weight: 0 }]);
+    setEdges([...edges, { targetNodeName: '', weight: 0 }]);
   };
 
   const handleRemoveEdge = (index) => {
@@ -54,11 +54,11 @@ const AddNode = ({ onNewNode }) => {
         {edges.map((edge, index) => (
           <div key={index} className="edge-input">
             <label>
-              Target Node ID:
+              Target Node Name:
               <input
                 type="text"
-                value={edge.targetNodeId}
-                onChange={(e) => handleEdgeChange(index, 'targetNodeId', e.target.value)}
+                value={edge.targetNodeName}
+                onChange={(e) => handleEdgeChange(index, 'targetNodeName', e.target.value)}
                 required
               />
             </label>
