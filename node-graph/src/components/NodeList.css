@@ -1,29 +1,39 @@
 .node-list {
-    text-align: left;
-  }
-  
-  .node-list ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .node-list li {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .node-list button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .node-list button:hover {
-    background-color: darkred;
-  }
-  
+  text-align: left;
+}
+
+.node-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.node-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.node-list button, .node-list .edit-btn {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.node-list button.delete-btn {
+  color: red;
+}
+
+.node-list button.delete-btn:hover {
+  color: darkred;
+}
+
+.node-list .edit-btn {
+  color: blue;
+}
+
+.node-list .edit-btn:hover {
+  color: darkblue;
+}

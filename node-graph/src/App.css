@@ -1,16 +1,32 @@
+/* App.css */
+:root {
+  --primary-color: #000000;
+  --secondary-color: #6C757D;
+  --background-color: #F8F9FA;
+  --text-color: #343A40;
+  --white-color: #FFFFFF;
+  --font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
 .App {
-  font-family: Arial, sans-serif;
   text-align: center;
 }
 
 header {
-  background-color: #282c34;
+  background-color: var(--primary-color);
   padding: 20px;
-  color: white;
+  color: var(--white-color);
 }
 
 nav a {
-  color: white;
+  color: var(--white-color);
   margin: 0 15px;
   text-decoration: none;
   font-weight: bold;
@@ -18,4 +34,31 @@ nav a {
 
 main {
   padding: 20px;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: darken(var(--primary-color), 10%);
+}
+
+.card {
+  background-color: var(--white-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px;
+}
+
+/* App.css */
+.icon {
+  margin-right: 5px;
 }

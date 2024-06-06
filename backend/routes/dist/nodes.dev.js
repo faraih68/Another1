@@ -1,6 +1,5 @@
 "use strict";
 
-// /routes/nodes.js
 var express = require('express');
 
 var router = express.Router();
@@ -53,7 +52,7 @@ router.post('/add', function _callee2(req, res) {
             node: nodeName,
             edges: edges ? edges.map(function (edge) {
               return {
-                target: edge.targetNodeId,
+                target: edge.targetNodeName,
                 weight: edge.weight
               };
             }) : []
@@ -112,7 +111,7 @@ router.post('/edit', function _callee3(req, res) {
           node.node = nodeName;
           node.edges = edges ? edges.map(function (edge) {
             return {
-              target: edge.targetNodeId,
+              target: edge.targetNodeName,
               weight: edge.weight
             };
           }) : [];

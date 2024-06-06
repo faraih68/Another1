@@ -1,4 +1,18 @@
 .graph {
-    text-align: left;
-  }
-  
+  text-align: left;
+  color: var(--text-color);
+}
+
+.dark .graph {
+  --text-color: white;
+}
+
+.light .graph {
+  --text-color: black;
+  margin-top: 20px;
+}
+
+.graph .vis-network {
+  width: 100%; 
+  height: 400px;  
+}

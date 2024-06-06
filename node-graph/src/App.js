@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { FaHome, FaPlus, FaRoute, FaProjectDiagram } from 'react-icons/fa';
 import NodeList from './components/NodeList';
 import AddNode from './components/AddNode';
 import EditNode from './components/EditNode';
@@ -12,12 +13,12 @@ function App() {
     <Router>
       <div className="App">
         <header>
-          <h1>Node Graph</h1>
+          <h1>NETWORK TOPOLOGY OPTIMIZATION TOOL</h1>
           <nav>
-            <a href="/">Home</a>
-            <a href="/add">Add Node</a>
-            <a href="/shortest-path">Find Shortest Path</a>
-            <a href="/graph">View Graph</a>
+            <a href="/"><FaHome className="icon" /> Home</a>
+            <a href="/add"><FaPlus className="icon" /> Add Node</a>
+            <a href="/shortest-path"><FaRoute className="icon" /> Find Shortest Path</a>
+            <a href="/graph"><FaProjectDiagram className="icon" /> View Graph</a>
           </nav>
         </header>
         <main>

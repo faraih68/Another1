@@ -1,5 +1,3 @@
-// /routes/nodes.js
-
 const express = require('express');
 const router = express.Router();
 const Node = require('../models/node.model');
@@ -22,7 +20,7 @@ router.post('/add', async (req, res) => {
     const node = new Node({
         node: nodeName,
         edges: edges ? edges.map(edge => ({
-            target: edge.targetNodeId,
+            target: edge.targetNodeName,
             weight: edge.weight
         })) : []
     });
@@ -47,7 +45,7 @@ router.post('/edit', async (req, res) => {
 
         node.node = nodeName;
         node.edges = edges ? edges.map(edge => ({
-            target: edge.targetNodeId,
+            target: edge.targetNodeName,
             weight: edge.weight
         })) : [];
 
