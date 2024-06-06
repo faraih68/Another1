@@ -41,21 +41,15 @@ router.get('/', function _callee(req, res) {
 }); // Handler to add a new node
 
 router.post('/add', function _callee2(req, res) {
-  var _req$body, nodeName, edges, node;
-
+  var nodeName, node;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          _req$body = req.body, nodeName = _req$body.nodeName, edges = _req$body.edges;
+          nodeName = req.body.nodeName;
           node = new Node({
             node: nodeName,
-            edges: edges ? edges.map(function (edge) {
-              return {
-                target: edge.targetNodeName,
-                weight: edge.weight
-              };
-            }) : []
+            edges: []
           });
           _context2.prev = 2;
           _context2.next = 5;
@@ -84,13 +78,13 @@ router.post('/add', function _callee2(req, res) {
 }); // Handler to edit an existing node
 
 router.post('/edit', function _callee3(req, res) {
-  var _req$body2, nodeId, nodeName, edges, node;
+  var _req$body, nodeId, nodeName, edges, node;
 
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          _req$body2 = req.body, nodeId = _req$body2.nodeId, nodeName = _req$body2.nodeName, edges = _req$body2.edges;
+          _req$body = req.body, nodeId = _req$body.nodeId, nodeName = _req$body.nodeName, edges = _req$body.edges;
           _context3.prev = 1;
           _context3.next = 4;
           return regeneratorRuntime.awrap(Node.findById(nodeId));
@@ -141,16 +135,16 @@ router.post('/edit', function _callee3(req, res) {
 }); // Handler to find the shortest path
 
 router.post('/shortest-path', function _callee4(req, res) {
-  var _req$body3, startNode, endNode, nodes, graph, path;
+  var _req$body2, startNode, endNode, nodes, graph, path;
 
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          _req$body3 = req.body, startNode = _req$body3.startNode, endNode = _req$body3.endNode;
+          _req$body2 = req.body, startNode = _req$body2.startNode, endNode = _req$body2.endNode;
           _context4.prev = 1;
           _context4.next = 4;
-          return regeneratorRuntime.awrap(Node.find().populate('edges.target').exec());
+          return regeneratorRuntime.awrap(Node.find());
 
         case 4:
           nodes = _context4.sent;
@@ -159,7 +153,7 @@ router.post('/shortest-path', function _callee4(req, res) {
           nodes.forEach(function (node) {
             graph[node.node] = {};
             node.edges.forEach(function (edge) {
-              graph[node.node][edge.target.node] = edge.weight;
+              graph[node.node][edge.target] = edge.weight;
             });
           }); // Apply Dijkstra's algorithm
 
@@ -196,7 +190,7 @@ router["delete"]('/:id', function _callee5(req, res) {
 
         case 3:
           res.json({
-            message: 'Node deleted.'
+            message: 'Node deleted'
           });
           _context5.next = 9;
           break;

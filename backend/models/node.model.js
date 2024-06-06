@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 
 const edgeSchema = new Schema({
     target: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Node',
+        type: String, // Change to String to store node names
         required: true
     },
     weight: {

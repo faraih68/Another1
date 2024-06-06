@@ -15,7 +15,7 @@ const EditNode = () => {
         const node = response.data;
         setNodeName(node.node);
         setEdges(node.edges.map(edge => ({
-          targetNodeName: edge.target.node,
+          targetNodeName: edge.target,
           weight: edge.weight
         })));
       })
@@ -90,7 +90,7 @@ const EditNode = () => {
           </div>
         ))}
         <button type="button" onClick={handleAddEdge}>Add Edge</button>
-        <button type="submit">Edit Node</button>
+        <button type="submit">Save Changes</button>
       </form>
     </div>
   );
