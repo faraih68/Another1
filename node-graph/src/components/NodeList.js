@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { FaTrash, FaEdit } from 'react-icons/fa';
 import './NodeList.css';
 
 const NodeList = () => {
@@ -32,9 +33,13 @@ const NodeList = () => {
       <ul>
         {nodes.map(node => (
           <li key={node._id}>
-            {node.node} - 
-            <Link to={`/edit/${node._id}`}>Edit</Link>
-            <button onClick={() => deleteNode(node._id)}>Delete</button>
+            {node.node}
+            <Link to={`/edit/${node._id}`} className="edit-btn">
+              <FaEdit />
+            </Link>
+            <button onClick={() => deleteNode(node._id)} className="delete-btn">
+              <FaTrash />
+            </button>
           </li>
         ))}
       </ul>

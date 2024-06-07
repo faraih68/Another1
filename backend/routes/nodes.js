@@ -13,26 +13,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Handler to add a new node
-router.post('/add', async (req, res) => {
-    const { nodeName, edges } = req.body;
-
-    const node = new Node({
-        node: nodeName,
-        edges: edges ? edges.map(edge => ({
-            target: edge.targetNodeName,
-            weight: edge.weight
-        })) : []
-    });
-
-    try {
-        await node.save();
-        res.json({ message: 'Node added!' });
-    } catch (err) {
-        res.status(400).json({ error: 'Error adding node: ' + err });
-    }
-});
-
 // Handler to edit an existing node
 router.post('/edit', async (req, res) => {
     const { nodeId, nodeName, edges } = req.body;
@@ -61,14 +41,14 @@ router.post('/shortest-path', async (req, res) => {
     const { startNode, endNode } = req.body;
 
     try {
-        const nodes = await Node.find().populate('edges.target').exec();
+        const nodes = await Node.find();
 
         // Construct graph for the Dijkstra library
         const graph = {};
         nodes.forEach(node => {
             graph[node.node] = {};
             node.edges.forEach(edge => {
-                graph[node.node][edge.target.node] = edge.weight;
+                graph[node.node][edge.target] = edge.weight;
             });
         });
 
@@ -84,9 +64,44 @@ router.post('/shortest-path', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         await Node.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Node deleted.' });
+        res.json({ message: 'Node deleted' });
     } catch (err) {
         res.status(400).json({ error: 'Error deleting node: ' + err });
+    }
+});
+
+// Handler to add a new node and update existing nodes' edges
+router.post('/add-with-edge-update', async (req, res) => {
+    const { nodeName, edges } = req.body; // Get 'edges' from the request
+
+    try {
+        // Create the new node
+        const newNode = new Node({ node: nodeName, edges: [] });
+        await newNode.save();
+
+        // Update edges based on the received 'edges' data
+        edges.forEach(edge => {
+            const targetNodeName = edge.targetNodeName;
+            const weight = edge.weight;
+
+            // Find the existing node to update its edges
+            Node.findOne({ node: targetNodeName })
+                .then(targetNode => {
+                    if (targetNode) {
+                        targetNode.edges.push({ target: nodeName, weight: weight });
+                        targetNode.save();
+                    } else {
+                        console.error(`Target node not found: ${targetNodeName}`);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error finding target node:', err);
+                });
+        });
+
+        res.json({ message: 'Node added and edge updates completed!' });
+    } catch (err) {
+        res.status(400).json({ error: 'Error adding node: ' + err });
     }
 });
 
