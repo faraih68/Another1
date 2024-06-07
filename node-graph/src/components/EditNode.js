@@ -1,3 +1,5 @@
+// EditNode.js
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -5,15 +7,17 @@ import './EditNode.css';
 
 const EditNode = () => {
   const [nodeName, setNodeName] = useState('');
+  const [newNodeName, setNewNodeName] = useState('');
   const [edges, setEdges] = useState([{ targetNodeName: '', weight: 0 }]);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { nodeNameParam } = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/nodes/${id}`)
+    axios.get(`http://localhost:5000/nodes/${nodeNameParam}`)
       .then(response => {
         const node = response.data;
         setNodeName(node.node);
+        setNewNodeName(node.node);
         setEdges(node.edges.map(edge => ({
           targetNodeName: edge.target,
           weight: edge.weight
@@ -22,7 +26,7 @@ const EditNode = () => {
       .catch(error => {
         console.error('There was an error fetching the node!', error);
       });
-  }, [id]);
+  }, [nodeNameParam]);
 
   const handleAddEdge = () => {
     setEdges([...edges, { targetNodeName: '', weight: 0 }]);
@@ -42,7 +46,7 @@ const EditNode = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const node = { nodeId: id, nodeName, edges };
+    const node = { nodeName, newNodeName, edges };
     axios.post('http://localhost:5000/nodes/edit', node)
       .then(() => {
         navigate('/');
@@ -60,8 +64,8 @@ const EditNode = () => {
           Node Name:
           <input
             type="text"
-            value={nodeName}
-            onChange={(e) => setNodeName(e.target.value)}
+            value={newNodeName}
+            onChange={(e) => setNewNodeName(e.target.value)}
             required
           />
         </label>

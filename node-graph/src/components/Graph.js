@@ -1,5 +1,7 @@
+// Graph.js
+
 import React, { useEffect, useRef } from 'react';
-import { Network } from 'vis-network/standalone'; // Import Network from vis-network
+import { Network } from 'vis-network/standalone';
 import axios from 'axios';
 import './Graph.css';
 
@@ -11,11 +13,11 @@ const Graph = ({ darkMode }) => {
     const fetchAndRenderGraph = async () => {
       try {
         const response = await axios.get('http://localhost:5000/nodes');
-        const nodes = response.data.map(node => ({ id: node._id, label: node.node }));
+        const nodes = response.data.map(node => ({ id: node.node, label: node.node }));
         const edges = [];
         response.data.forEach(node => {
           node.edges.forEach(edge => {
-            edges.push({ from: node._id, to: edge.target, label: edge.weight.toString() });
+            edges.push({ from: node.node, to: edge.target, label: edge.weight.toString() });
           });
         });
         const data = { nodes, edges };

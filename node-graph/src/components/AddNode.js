@@ -1,9 +1,11 @@
+// AddNode.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AddNode.css';
 
-const AddNode = ({ onNewNode }) => {
+const AddNode = () => {
   const [nodeName, setNodeName] = useState('');
   const [edges, setEdges] = useState([{ targetNodeName: '', weight: 0 }]);
   const navigate = useNavigate();
@@ -24,12 +26,11 @@ const AddNode = ({ onNewNode }) => {
     setEdges(newEdges);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const node = { nodeName, edges };
-    axios.post('http://localhost:5000/nodes/add-with-edge-update', node)
+    axios.post('http://localhost:5000/nodes/add', node)
       .then(() => {
-        onNewNode(node); // Pass the new node data to the parent component
         navigate('/');
       })
       .catch(error => {

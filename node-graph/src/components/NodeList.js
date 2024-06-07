@@ -1,3 +1,5 @@
+// NodeList.js
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -17,10 +19,10 @@ const NodeList = () => {
       });
   }, []);
 
-  const deleteNode = (id) => {
-    axios.delete(`http://localhost:5000/nodes/${id}`)
+  const deleteNode = (nodeName) => {
+    axios.delete(`http://localhost:5000/nodes/${nodeName}`)
       .then(() => {
-        setNodes(nodes.filter(node => node._id !== id));
+        setNodes(nodes.filter(node => node.node !== nodeName));
       })
       .catch(error => {
         console.error('There was an error deleting the node!', error);
@@ -34,10 +36,10 @@ const NodeList = () => {
         {nodes.map(node => (
           <li key={node._id}>
             {node.node}
-            <Link to={`/edit/${node._id}`} className="edit-btn">
+            <Link to={`/edit/${node.node}`} className="edit-btn">
               <FaEdit />
             </Link>
-            <button onClick={() => deleteNode(node._id)} className="delete-btn">
+            <button onClick={() => deleteNode(node.node)} className="delete-btn">
               <FaTrash />
             </button>
           </li>
