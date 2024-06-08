@@ -6,10 +6,8 @@ import AddNode from './components/AddNode';
 import EditNode from './components/EditNode';
 import ShortestPath from './components/ShortestPath';
 import Graph from './components/Graph';
-import axios from 'axios'; // Import axios here
+import axios from 'axios';
 import './App.css';
-
-// ... rest of your App.js code ...
 
 function App() {
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
@@ -18,12 +16,19 @@ function App() {
     // Fetch initial graph data
     axios.get('http://localhost:5000/nodes')
       .then(response => {
-        setGraphData(response.data);
+        const nodes = response.data;
+        const edges = [];
+        nodes.forEach(node => {
+          node.edges.forEach(edge => {
+            edges.push({ source: node.node, target: edge.target, weight: edge.weight });
+          });
+        });
+        setGraphData({ nodes, edges });
       })
       .catch(error => {
         console.error('Error fetching graph data:', error);
       });
-  }, []); 
+  }, []);
 
   const handleNewNode = (newNodeData) => {
     // Update the graphData state
@@ -48,11 +53,10 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<NodeList />} />
-            <Route path="/add" element={<AddNode onNewNode={handleNewNode} />} /> {/* Pass handleNewNode prop */}
-            <Route path="/edit/:nodeName" element={<EditNode />} />
-
+            <Route path="/add" element={<AddNode onNewNode={handleNewNode} />} />
+            <Route path="/edit/:id" element={<EditNode />} />
             <Route path="/shortest-path" element={<ShortestPath />} />
-            <Route path="/graph" element={<Graph graphData={graphData} />} /> {/* Pass graphData prop */}
+            <Route path="/graph" element={<Graph graphData={graphData} />} />
           </Routes>
         </main>
       </div>

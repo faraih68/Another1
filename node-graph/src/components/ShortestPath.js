@@ -26,7 +26,7 @@ const ShortestPath = () => {
       axios.get('http://localhost:5000/nodes')
         .then(response => {
           const nodes = response.data.map(node => ({
-            id: node.node,  // Change to node.node
+            id: node.node,  // Use node names as IDs to ensure consistency
             label: node.node
           }));
 
@@ -34,7 +34,7 @@ const ShortestPath = () => {
           response.data.forEach(node => {
             node.edges.forEach(edge => {
               edges.push({
-                from: node.node,  // Change to node.node
+                from: node.node,
                 to: edge.target,
                 label: edge.weight.toString()
               });
@@ -46,23 +46,39 @@ const ShortestPath = () => {
             const fromNode = response.data.find(node => node.node === path[i]);
             const toNode = response.data.find(node => node.node === path[i + 1]);
             highlightedEdges.push({
-              from: fromNode.node,  // Change to fromNode.node
-              to: toNode.node,  // Change to toNode.node
+              from: fromNode.node,
+              to: toNode.node,
               color: { color: 'red' }
             });
           }
 
           const data = { nodes, edges: [...edges, ...highlightedEdges] };
-          const options = {};
+          
+          const options = {
+            layout: {
+              improvedLayout: true,
+              hierarchical: {
+                enabled: false,
+                direction: 'UD', // Up-Down direction
+                sortMethod: 'directed'
+              }
+            },
+            physics: {
+              enabled: false
+            }
+          };
 
-          new Network(container.current, data, options);
+          const network = new Network(container.current, data, options);
+
+          network.once('stabilized', () => {
+            network.setOptions({ physics: false }); // Disable physics after stabilization
+          });
         })
         .catch(error => {
           console.error('There was an error fetching the nodes!', error);
         });
     }
   }, [path]);
-
 
   return (
     <div className="shortest-path">
