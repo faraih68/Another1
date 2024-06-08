@@ -6,6 +6,8 @@ import AddNode from './components/AddNode';
 import EditNode from './components/EditNode';
 import ShortestPath from './components/ShortestPath';
 import Graph from './components/Graph';
+import SideMenu from './components/SideMenu'; // Import the SideMenu component
+
 import axios from 'axios';
 import './App.css';
 
@@ -55,11 +57,11 @@ function App() {
             <Route path="/" element={<NodeList />} />
             <Route path="/add" element={<AddNode onNewNode={handleNewNode} />} />
             <Route path="/edit/:nodeName" element={<EditNode />} />
-
             <Route path="/shortest-path" element={<ShortestPath />} />
             <Route path="/graph" element={<Graph graphData={graphData} />} />
           </Routes>
         </main>
+        <SideMenu /> {/* Add the SideMenu component */}
       </div>
     </Router>
   );

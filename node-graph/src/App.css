@@ -5,6 +5,7 @@
   --text-color: #343A40;
   --white-color: #FFFFFF;
   --font-family: 'Open Sans', sans-serif;
+  --header-font-family: 'Orbitron', sans-serif;
 }
 
 body {
@@ -19,13 +20,14 @@ body {
 }
 
 header {
-  background-image: url('/network-bg.jpg'); /* Path to your image */
+  background-image: url('/network-bg.jpg'); /* Ensure this image is in the public folder */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   padding: 20px;
   color: var(--white-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: var(--header-font-family);
 }
 
 header h1 {
