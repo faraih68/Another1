@@ -54,7 +54,8 @@ function App() {
           <Routes>
             <Route path="/" element={<NodeList />} />
             <Route path="/add" element={<AddNode onNewNode={handleNewNode} />} />
-            <Route path="/edit/:id" element={<EditNode />} />
+            <Route path="/edit/:nodeName" element={<EditNode />} />
+
             <Route path="/shortest-path" element={<ShortestPath />} />
             <Route path="/graph" element={<Graph graphData={graphData} />} />
           </Routes>
