@@ -49,7 +49,8 @@ function App() {
           <Routes>
             <Route path="/" element={<NodeList />} />
             <Route path="/add" element={<AddNode onNewNode={handleNewNode} />} /> {/* Pass handleNewNode prop */}
-            <Route path="/edit/:id" element={<EditNode />} />
+            <Route path="/edit/:nodeName" element={<EditNode />} />
+
             <Route path="/shortest-path" element={<ShortestPath />} />
             <Route path="/graph" element={<Graph graphData={graphData} />} /> {/* Pass graphData prop */}
           </Routes>

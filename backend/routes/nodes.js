@@ -5,6 +5,18 @@ const router = express.Router();
 const Node = require('../models/node.model');
 const dijkstra = require('dijkstrajs');
 
+// Handler to get a specific node by name
+router.get('/:nodeName', async (req, res) => {
+    try {
+        const node = await Node.findOne({ node: req.params.nodeName });
+        res.json(node);
+    } catch (err) {
+        res.status(400).json({ error: 'Error fetching node: ' + err });
+    }
+});
+
+
+
 // Handler to get all nodes
 router.get('/', async (req, res) => {
     try {

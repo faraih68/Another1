@@ -1,5 +1,3 @@
-// EditNode.js
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,7 +8,7 @@ const EditNode = () => {
   const [newNodeName, setNewNodeName] = useState('');
   const [edges, setEdges] = useState([{ targetNodeName: '', weight: 0 }]);
   const navigate = useNavigate();
-  const { nodeNameParam } = useParams();
+  const { nodeName: nodeNameParam } = useParams(); // Destructure the correct param
 
   useEffect(() => {
     axios.get(`http://localhost:5000/nodes/${nodeNameParam}`)

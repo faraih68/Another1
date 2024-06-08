@@ -26,7 +26,7 @@ const ShortestPath = () => {
       axios.get('http://localhost:5000/nodes')
         .then(response => {
           const nodes = response.data.map(node => ({
-            id: node._id,
+            id: node.node,  // Change to node.node
             label: node.node
           }));
 
@@ -34,7 +34,7 @@ const ShortestPath = () => {
           response.data.forEach(node => {
             node.edges.forEach(edge => {
               edges.push({
-                from: node._id,
+                from: node.node,  // Change to node.node
                 to: edge.target,
                 label: edge.weight.toString()
               });
@@ -46,8 +46,8 @@ const ShortestPath = () => {
             const fromNode = response.data.find(node => node.node === path[i]);
             const toNode = response.data.find(node => node.node === path[i + 1]);
             highlightedEdges.push({
-              from: fromNode._id,
-              to: toNode._id,
+              from: fromNode.node,  // Change to fromNode.node
+              to: toNode.node,  // Change to toNode.node
               color: { color: 'red' }
             });
           }
@@ -62,6 +62,7 @@ const ShortestPath = () => {
         });
     }
   }, [path]);
+
 
   return (
     <div className="shortest-path">
