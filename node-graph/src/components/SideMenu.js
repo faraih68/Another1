@@ -33,7 +33,7 @@ const SideMenu = () => {
               <FaEnvelope /> <a href="mailto:faraih68@gmail.com">faraih68@gmail.com</a>
             </li>
             <li>
-              <FaQuestionCircle /> <a href="#" onClick={toggleHelp}>Help</a>
+            <FaQuestionCircle /> <button onClick={toggleHelp}>Help</button> 
             </li>
           </ul>
         </div>
