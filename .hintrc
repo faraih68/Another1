@@ -9,5 +9,8 @@
     "not firefox <= 125",
     "not ios_saf <= 12.5",
     "not opera <= 108"
-  ]
+  ],
+  "hints": {
+    "compat-api/html": "off"
+  }
 }
