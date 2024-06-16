@@ -20,10 +20,7 @@ body {
 }
 
 header {
-  background-image: url('/network-bg.jpg'); /* Ensure this image is in the public folder */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: var(--primary-color); /* Use a solid background color */
   padding: 20px;
   color: var(--white-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

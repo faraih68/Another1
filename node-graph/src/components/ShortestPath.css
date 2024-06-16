@@ -1,23 +1,22 @@
 .shortest-path {
-    text-align: left;
-  }
-  
-  .shortest-path form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .shortest-path label {
-    margin-bottom: 10px;
-  }
-  
-  .shortest-path button {
-    align-self: flex-start;
-    margin-top: 10px;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-    background-color: rgb(1, 125, 43);
-    color: rgb(0, 0, 0);
-  }
-  
+  text-align: left;
+}
+
+.shortest-path form {
+  display: flex;
+  flex-direction: column;
+}
+
+.shortest-path label {
+  margin-bottom: 10px;
+}
+
+.shortest-path button {
+  align-self: flex-start;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  background-color: rgb(1, 125, 43);
+  color: rgb(0, 0, 0);
+}
