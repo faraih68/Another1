@@ -1,39 +1,40 @@
 .add-node {
-  text-align: left;
-}
-
-.add-node form {
-  display: flex;
-  flex-direction: column;
-}
-
-.add-node label {
-  margin-bottom: 10px;
-}
-
-.edge-input {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.edge-input label {
-  margin-right: 10px;
-}
-
-.add-node button {
-  align-self: flex-start;
-  margin-top: 10px;
-  padding: 5px 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.add-node button[type="button"] {
-  background-color: lightgray;
-}
-
-.add-node button[type="submit"] {
-  background-color: green;
-  color: white;
-}
+    text-align: left;
+  }
+  
+  .add-node form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-node label {
+    margin-bottom: 10px;
+  }
+  
+  .edge-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .edge-input label {
+    margin-right: 10px;
+  }
+  
+  .add-node button {
+    align-self: flex-start;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .add-node button[type="button"] {
+    background-color: lightgray;
+  }
+  
+  .add-node button[type="submit"] {
+    background-color: green;
+    color: white;
+  }
+  

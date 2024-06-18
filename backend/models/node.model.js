@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const edgeSchema = new Schema({
     target: {
-        type: String,
+        type: String, // Change to String to store node names
         required: true
     },
     weight: {
@@ -27,3 +27,5 @@ const nodeSchema = new Schema({
 
 const Node = mongoose.model('Node', nodeSchema);
 module.exports = Node;
+
+
