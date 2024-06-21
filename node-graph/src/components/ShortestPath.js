@@ -43,17 +43,17 @@ const ShortestPath = () => {
 
           const highlightedEdges = [];
           for (let i = 0; i < path.length - 1; i++) {
-            const fromNode = response.data.find(node => node.node === path[i]);
-            const toNode = response.data.find(node => node.node === path[i + 1]);
+            const fromNode = path[i];
+            const toNode = path[i + 1];
             highlightedEdges.push({
-              from: fromNode.node,
-              to: toNode.node,
+              from: fromNode,
+              to: toNode,
               color: { color: 'red' }
             });
           }
 
           const data = { nodes, edges: [...edges, ...highlightedEdges] };
-          
+
           const options = {
             layout: {
               improvedLayout: true,

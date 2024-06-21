@@ -1,5 +1,6 @@
 :root {
   --primary-color: #000000;
+  --primary-color-dark: #02263146; 
   --secondary-color: #6C757D;
   --background-color: #F8F9FA;
   --text-color: #343A40;
@@ -20,10 +21,7 @@ body {
 }
 
 header {
-  background-image: url('/network-bg.jpg'); /* Ensure this image is in the public folder */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: var(--primary-color);
   padding: 20px;
   color: var(--white-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -67,7 +65,7 @@ button {
 }
 
 button:hover {
-  background-color: darken(var(--primary-color), 10%);
+  background-color: var(--primary-color-dark);
 }
 
 .card {
