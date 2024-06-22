@@ -1,0 +1,12 @@
+/* OptimizeNetwork.css */
+.optimize-network {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .optimize-network p {
+    margin-bottom: 10px;
+  }
+  

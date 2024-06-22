@@ -1,17 +1,15 @@
 const express = require('express');
 const { Graph, alg } = require('graphlib');
-const { Graph: JGraph, Edge, KruskalMST } = require('js-graph-algorithms');
 const router = express.Router();
 const Node = require('../models/node.model');
+const Papa = require('papaparse');
 
 // Handler to get all nodes
 router.get('/', async (req, res) => {
     try {
         const nodes = await Node.find();
-        console.log("Nodes fetched:", nodes); // Debug log
         res.json(nodes);
     } catch (error) {
-        console.error("Error fetching nodes:", error); // Debug log
         res.status(400).json({ error: 'Error fetching nodes: ' + error.message });
     }
 });
@@ -20,10 +18,8 @@ router.get('/', async (req, res) => {
 router.get('/:nodeName', async (req, res) => {
     try {
         const node = await Node.findOne({ node: req.params.nodeName });
-        console.log("Node fetched:", node); // Debug log
         res.json(node);
     } catch (error) {
-        console.error("Error fetching node:", error); // Debug log
         res.status(400).json({ error: 'Error fetching node: ' + error.message });
     }
 });
@@ -53,10 +49,8 @@ router.post('/add', async (req, res) => {
 
     try {
         const savedNode = await node.save();
-        console.log("Node added:", savedNode); // Debug log
         res.json({ message: 'Node added!', node: savedNode });
     } catch (error) {
-        console.error("Error adding node:", error); // Debug log
         res.status(400).json({ error: 'Error adding node: ' + error.message });
     }
 });
@@ -68,7 +62,6 @@ router.post('/edit', async (req, res) => {
     try {
         const node = await Node.findOne({ node: nodeName });
         if (!node) {
-            console.log("Node not found:", nodeName); // Debug log
             return res.status(404).json({ error: 'Node not found' });
         }
 
@@ -91,10 +84,8 @@ router.post('/edit', async (req, res) => {
         node.qos = qos || node.qos;
 
         const updatedNode = await node.save();
-        console.log("Node updated:", updatedNode); // Debug log
         res.json({ message: 'Node updated!', node: updatedNode });
     } catch (error) {
-        console.error("Error editing node:", error); // Debug log
         res.status(500).json({ error: 'Error editing node: ' + error.message });
     }
 });
@@ -103,10 +94,8 @@ router.post('/edit', async (req, res) => {
 router.delete('/:nodeName', async (req, res) => {
     try {
         const deletedNode = await Node.findOneAndDelete({ node: req.params.nodeName });
-        console.log("Node deleted:", deletedNode); // Debug log
         res.json({ message: 'Node deleted' });
     } catch (error) {
-        console.error("Error deleting node:", error); // Debug log
         res.status(400).json({ error: 'Error deleting node: ' + error.message });
     }
 });
@@ -118,7 +107,6 @@ router.post('/shortest-path', async (req, res) => {
     try {
         const nodes = await Node.find();
 
-        // Construct graph for Dijkstra's algorithm (using graphlib)
         const graph = new Graph();
         nodes.forEach(node => {
             graph.setNode(node.node);
@@ -135,80 +123,28 @@ router.post('/shortest-path', async (req, res) => {
         }
 
         const pathData = alg.dijkstra(graph, startNode, (e) => graph.edge(e).weight);
-        console.log("Dijkstra's Algorithm Result:", pathData);
 
-        // Extract the shortest path 
         let shortestPath = [];
-        if (pathData[endNode].distance !== Infinity) { 
+        if (pathData[endNode].distance !== Infinity) {
             let currentNode = endNode;
             while (currentNode) {
                 shortestPath.unshift(currentNode);
                 currentNode = pathData[currentNode].predecessor;
             }
-        }
 
-        if (shortestPath.length > 0 && shortestPath[0] === startNode) {
-            console.log("Shortest path found:", shortestPath);
-            res.status(200).json({ path: shortestPath });
-        } else {
-            console.log("No path found from", startNode, "to", endNode);
-            res.status(404).json({ error: `No path found from ${startNode} to ${endNode}` });
-        }
-
-    } catch (error) {
-        console.error("Error finding shortest path:", error);
-        res.status(500).json({ error: 'Error finding shortest path: ' + error.message });
-    }
-});
-
-// Handler to compute Minimum Spanning Tree
-router.post('/mst', async (req, res) => {
-    try {
-        const nodes = await Node.find();
-        if (!nodes.length) {
-            throw new Error('No nodes found in the database');
-        }
-
-        const graph = new JGraph(nodes.length);
-        const nodeIndexMap = new Map(nodes.map((node, index) => [node.node, index]));
-
-        console.log('Node Index Map:', nodeIndexMap);
-
-        nodes.forEach(node => {
-            const sourceIndex = nodeIndexMap.get(node.node);
-            if (sourceIndex === undefined) {
-                throw new Error(`Node ${node.node} not found in nodeIndexMap`);
+            if (shortestPath.length > 0 && shortestPath[0] === startNode) {
+                res.status(200).json({ path: shortestPath });
+            } else {
+                res.status(404).json({ error: `No path found from ${startNode} to ${endNode}` });
             }
-            node.edges.forEach(edge => {
-                const targetIndex = nodeIndexMap.get(edge.target);
-                if (targetIndex === undefined) {
-                    console.error(`Edge target ${edge.target} not found in nodeIndexMap for node ${node.node}`);
-                    return; // Skip this edge
-                }
-                console.log(`Adding edge from ${node.node} to ${edge.target} with weight ${edge.weight}`);
-                try {
-                    graph.addEdge(new Edge(sourceIndex, targetIndex, edge.weight));
-                } catch (err) {
-                    console.error(`Error adding edge from ${node.node} to ${edge.target}: ${err.message}`);
-                }
+        } else {
+            res.status(404).json({
+                error: `No path found from ${startNode} to ${endNode}`,
+                suggestion: `Please add an edge or intermediate nodes to connect ${startNode} and ${endNode}.`
             });
-        });
-
-        const mst = new KruskalMST(graph);
-        const mstEdges = mst.edges();
-
-        const formattedMST = mstEdges.map(edge => ({
-            v: nodes[edge.either()].node,
-            w: nodes[edge.other(edge.either())].node,
-            weight: edge.weight
-        }));
-
-        console.log("MST computed:", formattedMST);
-        res.json(formattedMST);
-
+        }
     } catch (error) {
-        console.error("Error computing MST:", error);
-        res.status(500).json({ error: 'Error computing MST: ' + error.message });
+        res.status(500).json({ error: 'Error finding shortest path: ' + error.message });
     }
 });
 
@@ -225,17 +161,13 @@ router.post('/centrality', async (req, res) => {
             });
         });
 
-        console.log("Graph constructed for centrality:", graph);
-
-        // Compute centrality measures
         const degreeCentrality = {};
         const closenessCentrality = {};
         const betweennessCentrality = {};
-        const nodeCount = graph.nodeCount();
 
         graph.nodes().forEach(node => {
             degreeCentrality[node] = graph.outEdges(node).length;
-            
+
             const distances = alg.dijkstra(graph, node, (e) => graph.edge(e).weight);
             let totalDistance = 0;
             let reachableNodes = 0;
@@ -252,11 +184,10 @@ router.post('/centrality', async (req, res) => {
             } else {
                 closenessCentrality[node] = 0;
             }
-            
+
             betweennessCentrality[node] = 0;
         });
 
-        // Betweenness centrality calculation
         graph.nodes().forEach(source => {
             const distances = alg.dijkstra(graph, source, (e) => graph.edge(e).weight);
             graph.nodes().forEach(target => {
@@ -264,7 +195,7 @@ router.post('/centrality', async (req, res) => {
                     let paths = 0;
                     let pathsThroughNode = 0;
                     graph.nodes().forEach(node => {
-                        if (node !== source && node !== target && distances[target]) { // Check if distances[target] exists
+                        if (node !== source && node !== target && distances[target]) {
                             paths += (distances[target].predecessors || []).filter(predecessor => predecessor === node).length;
                             pathsThroughNode += (distances[target].predecessors || []).filter(predecessor => predecessor === node && distances[node].distance !== Infinity).length;
                         }
@@ -276,11 +207,170 @@ router.post('/centrality', async (req, res) => {
             });
         });
 
-        console.log("Centrality measures computed:", { degreeCentrality, closenessCentrality, betweennessCentrality }); // Debug log
         res.json({ degreeCentrality, closenessCentrality, betweennessCentrality });
     } catch (error) {
-        console.error("Error computing centrality measures:", error);
         res.status(500).json({ error: 'Error computing centrality measures: ' + error.message });
+    }
+});
+
+// Handler to upload CSV data and add nodes
+router.post('/csv-upload', async (req, res) => {
+    try {
+        const csvData = req.body.csvData;
+        const parsedNodes = parseCSV(csvData);
+
+        const insertResult = await Node.insertMany(parsedNodes);
+        res.json({ message: 'Nodes added from CSV!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error adding nodes from CSV: ' + error.message });
+    }
+});
+
+function parseCSV(csvData) {
+    const parsed = Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true
+    });
+    return parsed.data.map(row => {
+        return {
+            node: row.nodeName,
+            edges: row.edges ? row.edges.split(',').map(edge => {
+                const [targetNodeName, weight] = edge.split(':');
+                return {
+                    target: targetNodeName,
+                    weight: parseFloat(weight)
+                };
+            }) : [],
+            reliability: parseFloat(row.reliability) || 1,
+            latency: parseFloat(row.latency) || 0,
+            throughput: parseFloat(row.throughput) || 0,
+            cost: parseFloat(row.cost) || 0,
+            security: parseFloat(row.security) || 1,
+            qos: parseFloat(row.qos) || 0
+        };
+    });
+}
+
+// Handler to optimize the network
+router.post('/optimize', async (req, res) => {
+    try {
+        const nodes = await Node.find();
+        const optimizationGoal = req.body.optimizationGoal;
+
+        const optimizedNodes = optimizeNetwork(nodes, optimizationGoal);
+
+        const bulkOps = optimizedNodes.map(node => ({
+            updateOne: {
+                filter: { node: node.node },
+                update: { $set: { edges: node.edges } }
+            }
+        }));
+        await Node.bulkWrite(bulkOps);
+
+        res.json({ optimizedNodes });
+    } catch (error) {
+        res.status(500).json({ error: 'Error optimizing network: ' + error.message });
+    }
+});
+
+function optimizeNetwork(nodes, optimizationGoal) {
+    const graph = new Graph();
+
+    nodes.forEach(node => {
+        graph.setNode(node.node);
+        node.edges.forEach(edge => {
+            let weight;
+            if (optimizationGoal === 'cost') {
+                weight = 1 / (edge.cost + 1);
+            } else if (optimizationGoal === 'latency') {
+                weight = Math.pow(edge.latency, 2) * 10;
+            } else if (optimizationGoal === 'reliability') {
+                weight = 1 - edge.reliability;
+            } else if (optimizationGoal === 'security') {
+                weight = 1 - edge.security;
+            } else if (optimizationGoal === 'qos') {
+                weight = edge.qos;
+            } else {
+                weight = edge.cost;
+            }
+            graph.setEdge(node.node, edge.target, { weight });
+        });
+    });
+
+    const shortestPaths = {};
+    graph.nodes().forEach(sourceNode => {
+        shortestPaths[sourceNode] = {};
+        graph.nodes().forEach(targetNode => {
+            if (sourceNode !== targetNode) {
+                const pathData = alg.dijkstra(graph, sourceNode, (e) => graph.edge(e).weight);
+                shortestPaths[sourceNode][targetNode] = pathData[targetNode].distance;
+            }
+        });
+    });
+
+    const optimizedNodes = nodes.map(node => {
+        return {
+            ...node,
+            edges: node.edges.map(edge => {
+                const shortestPathDistance = shortestPaths[node.node][edge.target];
+                let newWeight = edge.weight;
+                if (shortestPathDistance < Infinity && shortestPathDistance === edge.weight) {
+                    newWeight = edge.weight * 0.8;
+                } else {
+                    newWeight = edge.weight * 1.2;
+                }
+                return { ...edge, weight: newWeight };
+            })
+        };
+    });
+
+    return optimizedNodes;
+}
+
+const calculateNetworkDiameter = (nodes, edges) => {
+    const nodeCount = nodes.length;
+    const distances = Array.from({ length: nodeCount }, () => Array(nodeCount).fill(Infinity));
+
+    nodes.forEach((node, index) => {
+        distances[index][index] = 0;
+    });
+
+    edges.forEach(({ source, target, weight }) => {
+        const sourceIndex = nodes.findIndex(node => node.node === source);
+        const targetIndex = nodes.findIndex(node => node.node === target);
+        distances[sourceIndex][targetIndex] = weight;
+        distances[targetIndex][sourceIndex] = weight;
+    });
+
+    for (let k = 0; k < nodeCount; k++) {
+        for (let i = 0; i < nodeCount; i++) {
+            for (let j = 0; j < nodeCount; j++) {
+                if (distances[i][k] + distances[k][j] < distances[i][j]) {
+                    distances[i][j] = distances[i][k] + distances[k][j];
+                }
+            }
+        }
+    }
+
+    let diameter = 0;
+    for (let i = 0; i < nodeCount; i++) {
+        for (let j = 0; j < nodeCount; j++) {
+            if (distances[i][j] > diameter) {
+                diameter = distances[i][j];
+            }
+        }
+    }
+
+    return diameter;
+};
+
+router.post('/network-diameter', (req, res) => {
+    try {
+        const { nodes, edges } = req.body;
+        const diameter = calculateNetworkDiameter(nodes, edges);
+        res.json({ diameter });
+    } catch (error) {
+        res.status(500).send('Error calculating network diameter');
     }
 });
 

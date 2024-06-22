@@ -18,6 +18,7 @@
     "graphlib": "^2.1.8",
     "js-graph-algorithms": "^1.0.18",
     "mongodb": "^6.6.2",
-    "mongoose": "^8.4.0"
+    "mongoose": "^8.4.0",
+    "papaparse": "^5.4.1"
   }
 }

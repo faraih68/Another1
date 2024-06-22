@@ -1,0 +1,24 @@
+/* CSVUpload.css */
+.csv-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.csv-upload input[type="file"] {
+  margin-bottom: 10px;
+}
+
+.csv-upload button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
