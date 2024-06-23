@@ -330,48 +330,52 @@ function optimizeNetwork(nodes, optimizationGoal) {
 const calculateNetworkDiameter = (nodes, edges) => {
     const nodeCount = nodes.length;
     const distances = Array.from({ length: nodeCount }, () => Array(nodeCount).fill(Infinity));
-
+  
     nodes.forEach((node, index) => {
-        distances[index][index] = 0;
+      distances[index][index] = 0;
     });
-
-    edges.forEach(({ source, target, weight }) => {
-        const sourceIndex = nodes.findIndex(node => node.node === source);
-        const targetIndex = nodes.findIndex(node => node.node === target);
-        distances[sourceIndex][targetIndex] = weight;
-        distances[targetIndex][sourceIndex] = weight;
+  
+    edges.forEach(({ from, to, weight }) => {
+      const fromIndex = nodes.findIndex(node => node.id === from);
+      const toIndex = nodes.findIndex(node => node.id === to);
+      distances[fromIndex][toIndex] = weight;
+      distances[toIndex][fromIndex] = weight; // Assuming undirected graph
     });
-
+  
     for (let k = 0; k < nodeCount; k++) {
-        for (let i = 0; i < nodeCount; i++) {
-            for (let j = 0; j < nodeCount; j++) {
-                if (distances[i][k] + distances[k][j] < distances[i][j]) {
-                    distances[i][j] = distances[i][k] + distances[k][j];
-                }
-            }
+      for (let i = 0; i < nodeCount; i++) {
+        for (let j = 0; j < nodeCount; j++) {
+          if (distances[i][k] + distances[k][j] < distances[i][j]) {
+            distances[i][j] = distances[i][k] + distances[k][j];
+          }
         }
+      }
     }
-
+  
     let diameter = 0;
     for (let i = 0; i < nodeCount; i++) {
-        for (let j = 0; j < nodeCount; j++) {
-            if (distances[i][j] > diameter) {
-                diameter = distances[i][j];
-            }
+      for (let j = 0; j < nodeCount; j++) {
+        if (distances[i][j] > diameter) {
+          diameter = distances[i][j];
         }
+      }
     }
-
+  
     return diameter;
-};
-
-router.post('/network-diameter', (req, res) => {
+  };
+  
+  router.post('/network-diameter', (req, res) => {
     try {
-        const { nodes, edges } = req.body;
-        const diameter = calculateNetworkDiameter(nodes, edges);
-        res.json({ diameter });
+      const { nodes, edges } = req.body;
+      if (!nodes || !edges) {
+        return res.status(400).send('Invalid input');
+      }
+      const diameter = calculateNetworkDiameter(nodes, edges);
+      res.json({ diameter });
     } catch (error) {
-        res.status(500).send('Error calculating network diameter');
+      res.status(500).send('Error calculating network diameter');
     }
-});
 
+  });
+  
 module.exports = router;

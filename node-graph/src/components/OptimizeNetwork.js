@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Network } from 'vis-network/standalone';
 import { DataSet } from 'vis-data';
 import './OptimizeNetwork.css';
+import NetworkDiameter from './NetworkDiameter'; // Importing the NetworkDiameter component
 
 const OptimizeNetwork = () => {
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
@@ -59,7 +60,7 @@ const OptimizeNetwork = () => {
         const edges = [];
         response.data.forEach(node => {
           node.edges.forEach(edge => {
-            edges.push({ from: node.node, to: edge.target, label: edge.weight.toString() });
+            edges.push({ from: node.node, to: edge.target, label: edge.weight.toString(), weight: edge.weight });
           });
         });
         setGraphData({ nodes, edges });
@@ -114,7 +115,7 @@ const OptimizeNetwork = () => {
     <div className="optimize-network">
       <h2>Network Optimization</h2>
       <div>
-        <h3>Original Network</h3>
+        <h3>Optimized Network</h3>
         <div ref={containerRef} style={{ height: '500px', width: '800px' }} />
         <button onClick={fetchGraphData}>Refresh</button>
       </div>
@@ -134,6 +135,9 @@ const OptimizeNetwork = () => {
           {/* Add options for other goals (reliability, security, etc.) */}
         </select>
       </div>
+      {graphData.nodes.length > 0 && graphData.edges.length > 0 && (
+        <NetworkDiameter nodes={graphData.nodes} edges={graphData.edges} />
+      )}
     </div>
   );
 };
