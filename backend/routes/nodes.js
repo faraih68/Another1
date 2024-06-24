@@ -1,3 +1,4 @@
+// nodes.js
 const express = require('express');
 const { Graph, alg } = require('graphlib');
 const router = express.Router();
@@ -358,5 +359,46 @@ router.post('/network-diameter', async (req, res) => {
     }
 });
 
+// Handler to delete all nodes
+router.delete('/delete-all', async (req, res) => {
+  try {
+    await Node.deleteMany({});
+    res.json({ message: 'All nodes deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting all nodes: ' + error.message });
+  }
+});
+
+// Handler to edit connections to bidirectional
+router.put('/edit-connections', async (req, res) => {
+  try {
+    const nodes = await Node.find();
+
+    const bulkOps = nodes.flatMap(node => {
+      const newEdges = node.edges.map(edge => ({
+        target: edge.target,
+        weight: edge.weight,
+        reliability: edge.reliability,
+        latency: edge.latency,
+        throughput: edge.throughput,
+        cost: edge.cost,
+        security: edge.security,
+        qos: edge.qos
+      }));
+
+      return [
+        // Update the existing edges
+        { updateOne: { filter: { node: node.node }, update: { $set: { edges: newEdges } } } },
+        // Add the reverse edges for each edge
+        ...node.edges.map(edge => ({ updateOne: { filter: { node: edge.target }, update: { $addToSet: { edges: { target: node.node, weight: edge.weight, reliability: edge.reliability, latency: edge.latency, throughput: edge.throughput, cost: edge.cost, security: edge.security, qos: edge.qos } } } } }))
+      ];
+    });
+
+    await Node.bulkWrite(bulkOps);
+    res.json({ message: 'Connections updated to bidirectional' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error editing connections: ' + error.message });
+  }
+});
 
 module.exports = router; 
