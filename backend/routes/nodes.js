@@ -100,9 +100,10 @@ router.delete('/:nodeName', async (req, res) => {
     }
 });
 
-// Handler to find the shortest path
+// Handler to find the shortest path - using Dijkstra's algorithm
 router.post('/shortest-path', async (req, res) => {
     const { startNode, endNode } = req.body;
+    console.log('Received shortest path request:', req.body);
 
     try {
         const nodes = await Node.find();
@@ -116,10 +117,10 @@ router.post('/shortest-path', async (req, res) => {
         });
 
         if (!graph.hasNode(startNode)) {
-            throw new Error(`Start node ${startNode} not found in the graph`);
+            return res.status(404).json({ error: `Start node ${startNode} not found in the graph` });
         }
         if (!graph.hasNode(endNode)) {
-            throw new Error(`End node ${endNode} not found in the graph`);
+            return res.status(404).json({ error: `End node ${endNode} not found in the graph` });
         }
 
         const pathData = alg.dijkstra(graph, startNode, (e) => graph.edge(e).weight);
@@ -144,6 +145,7 @@ router.post('/shortest-path', async (req, res) => {
             });
         }
     } catch (error) {
+        console.error('Error finding shortest path:', error);
         res.status(500).json({ error: 'Error finding shortest path: ' + error.message });
     }
 });
@@ -327,55 +329,34 @@ function optimizeNetwork(nodes, optimizationGoal) {
     return optimizedNodes;
 }
 
-const calculateNetworkDiameter = (nodes, edges) => {
-    const nodeCount = nodes.length;
-    const distances = Array.from({ length: nodeCount }, () => Array(nodeCount).fill(Infinity));
-  
-    nodes.forEach((node, index) => {
-      distances[index][index] = 0;
-    });
-  
-    edges.forEach(({ from, to, weight }) => {
-      const fromIndex = nodes.findIndex(node => node.id === from);
-      const toIndex = nodes.findIndex(node => node.id === to);
-      distances[fromIndex][toIndex] = weight;
-      distances[toIndex][fromIndex] = weight; // Assuming undirected graph
-    });
-  
-    for (let k = 0; k < nodeCount; k++) {
-      for (let i = 0; i < nodeCount; i++) {
-        for (let j = 0; j < nodeCount; j++) {
-          if (distances[i][k] + distances[k][j] < distances[i][j]) {
-            distances[i][j] = distances[i][k] + distances[k][j];
-          }
-        }
-      }
-    }
-  
-    let diameter = 0;
-    for (let i = 0; i < nodeCount; i++) {
-      for (let j = 0; j < nodeCount; j++) {
-        if (distances[i][j] > diameter) {
-          diameter = distances[i][j];
-        }
-      }
-    }
-  
-    return diameter;
-  };
-  
-  router.post('/network-diameter', (req, res) => {
+// Handler to calculate network diameter - using Dijkstra's algorithm
+router.post('/network-diameter', async (req, res) => {
     try {
-      const { nodes, edges } = req.body;
-      if (!nodes || !edges) {
-        return res.status(400).send('Invalid input');
-      }
-      const diameter = calculateNetworkDiameter(nodes, edges);
-      res.json({ diameter });
-    } catch (error) {
-      res.status(500).send('Error calculating network diameter');
-    }
+        const nodes = await Node.find();
 
-  });
-  
-module.exports = router;
+        const graph = new Graph();
+        nodes.forEach(node => {
+            graph.setNode(node.node);
+            node.edges.forEach(edge => {
+                graph.setEdge(node.node, edge.target, { weight: edge.weight });
+            });
+        });
+
+        let diameter = 0;
+        graph.nodes().forEach(sourceNode => {
+            const distances = alg.dijkstra(graph, sourceNode, (e) => graph.edge(e).weight);
+            graph.nodes().forEach(targetNode => {
+                if (sourceNode !== targetNode && distances[targetNode].distance > diameter) {
+                    diameter = distances[targetNode].distance;
+                }
+            });
+        });
+        console.log('Network Diameter:', diameter);
+        res.json({ diameter });
+    } catch (error) {
+        res.status(500).json({ error: 'Error calculating network diameter: ' + error.message });
+    }
+});
+
+
+module.exports = router; 
